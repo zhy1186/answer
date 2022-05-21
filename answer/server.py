@@ -2,6 +2,7 @@ import math
 
 from aiohttp import web
 import time
+import sys
 
 
 class ReceivedData:
@@ -119,7 +120,11 @@ class Server:
 
 
 if __name__ == '__main__':
-    svr = Server(5000, 3000, 'http://localhost', 20000)
+    # argv[1] : port, argv[2] : W(region), argv[3] : S(interval) e.g.  20000 5 3
+    port = int(sys.argv[1])
+    W = int(sys.argv[2])
+    S = int(sys.argv[3])
+    svr = Server(W * 1000, S * 1000, 'http://localhost', port)
     app = web.Application()
     app.add_routes([web.post('/', svr.receive)])
     web.run_app(app, host='localhost', port=20000)

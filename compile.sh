@@ -1,0 +1,1 @@
+/usr/bin/cmake3 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/hengyi/software/clion/bin/ninja/linux/ninja -G Ninja /home/hengyi/work/answer

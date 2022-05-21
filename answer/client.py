@@ -3,6 +3,7 @@ import aiohttp
 import time
 import random
 import math
+import sys
 
 
 class Client:
@@ -53,7 +54,13 @@ class Client:
 
 
 if __name__ == '__main__':
-    client = Client(0.1, 1000, 'http://localhost:20000')
+    # argv[1] : sigma, argv[2] : interval(ms), argv[3] : port e.g.:  0.1 500 20000
+    sigma = float(sys.argv[1])
+    interval = int(sys.argv[2])
+    port = str(sys.argv[3])
+    url = 'http://localhost:'+ port
+
+    client = Client(sigma, interval, url)
     while True:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(client.send_once())
