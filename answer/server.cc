@@ -12,6 +12,7 @@ struct received_data {
   double b{};
   std::chrono::milliseconds timestamp{};
 };
+
 class Server {
  public:
   Server() = default;
@@ -21,12 +22,12 @@ class Server {
   void start_server(std::chrono::milliseconds start_time = std::chrono::duration_cast<std::chrono::milliseconds>(
                         std::chrono::system_clock::now().time_since_epoch())) {
     next_compute_time_ = start_time.count() + statistic_interval_S_.count();
-    svr_.Post("/data", [this](const httplib::Request& req, httplib::Response& res) {
+    svr_.Post("/", [this](const httplib::Request& req, httplib::Response& res) {
       auto recv = req.body;
       auto recv_time =
           std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
-      // save date
+      // save data
       for (auto i = recv.cbegin() + 1; i != recv.cend() - 1; ++i) {
         if (std::isupper(*i)) {
           double a = std::stod(std::string(recv.cbegin() + 1, i));

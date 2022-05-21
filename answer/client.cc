@@ -30,15 +30,6 @@ class Client {
   }
 
  private:
-  std::pair<double, double> generate_random_pair_sigma(std::pair<double, double> normal) const {
-    double normal_a = normal.first;
-    double normal_b = normal.second;
-    double theta = 0.5 * std::asin(sigma_);
-    double normal_sigma_a = std::cos(theta) * normal_a + std::sin(theta) * normal_b;
-    double normal_sigma_b = std::cos(theta) * normal_b + std::sin(theta) * normal_a;
-    return std::make_pair(normal_sigma_a, normal_sigma_b);
-  }
-
   static std::pair<double, double> generate_uniform_random_pair() {
     double a = (rand() % 10001) / 10000.0;
     double b = (rand() % 10001) / 10000.0;
@@ -55,9 +46,18 @@ class Client {
     return std::make_pair(normal_a, normal_b);
   }
 
+  std::pair<double, double> generate_random_pair_sigma(std::pair<double, double> normal) const {
+    double normal_a = normal.first;
+    double normal_b = normal.second;
+    double theta = 0.5 * std::asin(sigma_);
+    double normal_sigma_a = std::cos(theta) * normal_a + std::sin(theta) * normal_b;
+    double normal_sigma_b = std::cos(theta) * normal_b + std::sin(theta) * normal_a;
+    return std::make_pair(normal_sigma_a, normal_sigma_b);
+  }
+
   void send_numbers_once(double a, double b) {
     std::string body = "[" + std::to_string(a) + "A" + std::to_string(b) + "]";
-    cli_.Post("/data", body, "text/plain");
+    cli_.Post("/", body, "text/plain");
   }
 
  private:
