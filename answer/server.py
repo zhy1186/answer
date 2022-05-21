@@ -22,6 +22,7 @@ class Server:
         self.server_start_time = int(round(time.time() * 1000))
         self.next_compute_time_ = self.server_start_time + self.statistic_interval_S_  # timestamp in ms
 
+    # compute and output min, max, average, median, standard deviation and Cov(a, b), Cor(a, b)
     def compute_statistics_once(self):
         [ai_list, bi_list] = self.separate_num_pairs_during_region()
         ai_times_bi_list = self.lista_times_listb(ai_list, bi_list)
@@ -33,6 +34,7 @@ class Server:
         cor_ab = cov_ab / (ai_info[1] * bi_info[1])
         print("Cov(ai, bi): ", cov_ab, " Cor(ai, bi): ", cor_ab)
 
+    # compute one-list statistic variables using basic math
     def compute_basic_statistic_variables(self, list, title=""):
         sorted_list = self.simple_bubble_sort(list)
 
@@ -71,6 +73,7 @@ class Server:
                     lst[i], lst[j] = lst[j], lst[i]
         return lst
 
+    # separate received string into a and b
     def separate_received_nums(self, received_string):
         num_a = float(received_string[1:-1].split('A')[0])
         num_b = float(received_string[1:-1].split('A')[1])
@@ -78,6 +81,7 @@ class Server:
         data = ReceivedData(num_a, num_b, timestamp)
         self.received_data_list.append(data)
 
+    # get nums involved in the calculation
     def separate_num_pairs_during_region(self):
         region = self.statistic_region_W_ms_
         now = self.get_now_ms_timestamp()
@@ -94,6 +98,7 @@ class Server:
                 bi_list.append(item.b_)
         return [ai_list, bi_list]
 
+    # get "ai * bi"
     @staticmethod
     def lista_times_listb(lista, listb):
         size = len(lista)
@@ -102,10 +107,12 @@ class Server:
             listab.append(lista[i] * listb[i])
         return listab
 
+    # get now()
     @staticmethod
     def get_now_ms_timestamp():
         return int(round(time.time() * 1000))
 
+    # receive data from client
     async def receive(self, request):
         recv = await request.text()
         recv_time = self.get_now_ms_timestamp()

@@ -14,6 +14,7 @@ class Client {
 
 #pragma clang diagnostic push
 #pragma ide diagnostic ignored "EndlessLoop"
+  // generate (a, b) ~N(0, 1) with correlation sigma ,send to server and sleep
   void send_numbers_regularly() {
     while (true) {
       auto send_pair = generate_suitable_pair();
@@ -23,6 +24,7 @@ class Client {
   }
 #pragma clang diagnostic pop
 
+  // generate a pair of nums ~N(0, 1) with sigma
   std::pair<double, double> generate_suitable_pair() {
     std::pair<double, double> uniform = generate_uniform_random_pair();
     std::pair<double, double> normal_independent = generate_std_normal_random_pair(uniform);
@@ -31,13 +33,14 @@ class Client {
   }
 
  private:
+  // basic uniform random supported by only rand() function
   static std::pair<double, double> generate_uniform_random_pair() {
     double a = (rand() % 10001) / 10000.0;
     double b = (rand() % 10001) / 10000.0;
     return std::make_pair(a, b);
   }
 
-  // Use Box-Mullelr transform
+  // use Box-Muller transform to get a,b ~N(0,1) and sigma = 0 (independent a and b)
   static std::pair<double, double> generate_std_normal_random_pair(std::pair<double, double> uniform) {
     double a = uniform.first;
     double b = uniform.second;
@@ -47,6 +50,7 @@ class Client {
     return std::make_pair(normal_a, normal_b);
   }
 
+  // introduce correlation factor sigma to get a,n ~N(0,1) with sigma
   std::pair<double, double> generate_random_pair_sigma(std::pair<double, double> normal) const {
     double normal_a = normal.first;
     double normal_b = normal.second;
@@ -56,6 +60,7 @@ class Client {
     return std::make_pair(normal_sigma_a, normal_sigma_b);
   }
 
+  // send nums to server using "text/plain"
   void send_numbers_once(double a, double b) {
     std::string body = "[" + std::to_string(a) + "A" + std::to_string(b) + "]";
     auto res = cli_.Post("/", body, "text/plain");

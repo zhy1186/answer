@@ -35,8 +35,6 @@ class Server {
           received_data_.push_back({a, b,
                                     std::chrono::duration_cast<std::chrono::milliseconds>(
                                         std::chrono::system_clock::now().time_since_epoch())});
-          //          std::cout << received_data_.back().a << "  " << received_data_.back().b << "   "
-          //                    << received_data_.back().timestamp.count() << std::endl;
         }
       }
 
@@ -54,6 +52,7 @@ class Server {
     svr_.listen(host_.c_str(), port_);
   }
 
+  // compute and output min, max, average, median, standard deviation and Cov(a, b), Cor(a, b)
   void compute_statistics_once() {
     auto vec_pair = separate_num_pairs_during_region();
     compute_cov_cor_and_output(vec_pair.first, vec_pair.second);
@@ -85,14 +84,7 @@ class Server {
     return std::make_pair(ai_vec, bi_vec);
   }
 
-  static double compute_average(const std::vector<double>& vec) {
-    double sum{};
-    for (auto i : vec) {
-      sum += i;
-    }
-    return sum / static_cast<double>(vec.size());
-  }
-
+  // compute one-list statistic variables using basic math
   static std::pair<double, double> compute_basic_statistic_variables(std::vector<double>& vec,
                                                                      const std::string& title = "") {
     std::vector<double> res_vec = simple_bubble_sort(vec);
@@ -119,6 +111,15 @@ class Server {
     return std::make_pair(average, std_deviation);
   }
 
+  static double compute_average(const std::vector<double>& vec) {
+    double sum{};
+    for (auto i : vec) {
+      sum += i;
+    }
+    return sum / static_cast<double>(vec.size());
+  }
+
+  // get "ai * bi"
   static std::vector<double> veca_times_vecb(const std::vector<double>& vec_a, const std::vector<double>& vec_b) {
     std::vector<double> times{};
     for (size_type i = 0; i < vec_a.size(); ++i) {
