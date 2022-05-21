@@ -1,5 +1,6 @@
 #include <chrono>
 #include <cmath>
+#include <cstdlib>
 #include <string>
 #include <thread>
 
@@ -57,7 +58,8 @@ class Client {
 
   void send_numbers_once(double a, double b) {
     std::string body = "[" + std::to_string(a) + "A" + std::to_string(b) + "]";
-    cli_.Post("/", body, "text/plain");
+    auto res = cli_.Post("/", body, "text/plain");
+    std::cout << res->body << std::endl;
   }
 
  private:
@@ -66,7 +68,14 @@ class Client {
   httplib::Client cli_{std::string{}};
 };
 
-int main() {
-  Client client("localhost", "20000", std::chrono::milliseconds{500}, 0.1);
+int main(__attribute__((unused)) int argc, char** argv) {
+  // argv[1] : sigma, argv[2] : interval(ms), argv[3] : port e.g.: ./client 0.1 500 20000
+  char** pend1 = nullptr;
+  double sigma = std::strtod(argv[1], pend1);
+  char** pend2 = nullptr;
+  int64_t interval = std::strtol(argv[2], pend2, 10);
+  const std::string port{argv[3]};
+
+  Client client("localhost", port, std::chrono::milliseconds{interval}, sigma);
   client.send_numbers_regularly();
 }

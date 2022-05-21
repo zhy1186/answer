@@ -42,11 +42,13 @@ class Server {
 
       // compute or not
       if (recv_time.count() >= next_compute_time_) {
-        std::cout << "vvvvvvvvvv" << std::endl;
+        std::cout << "==========vvvvv C++ Server vvvvv==========" << std::endl;
         compute_statistics_once();
         next_compute_time_ += statistic_interval_S_.count();
-        std::cout << "^^^^^^^^^^" << std::endl;
+        std::cout << "==========================================" << std::endl;
       }
+
+      res.set_content("C++ Server Received Data :)", "text/plain");
     });
 
     svr_.listen(host_.c_str(), port_);
@@ -60,8 +62,8 @@ class Server {
  private:
   static void compute_cov_cor_and_output(std::vector<double>& vec_a, std::vector<double>& vec_b) {
     auto vec_a_times_b = veca_times_vecb(vec_a, vec_b);
-    auto vec_a_info = compute_basic_statistic_variables(vec_a, "ai");
-    auto vec_b_info = compute_basic_statistic_variables(vec_b, "bi");
+    auto vec_a_info = compute_basic_statistic_variables(vec_a, "  ai   ");
+    auto vec_b_info = compute_basic_statistic_variables(vec_b, "  bi   ");
     auto vec_ab_info = compute_basic_statistic_variables(vec_a_times_b, "ai * bi");
     auto cov_ab = vec_ab_info.first - vec_a_info.first * vec_b_info.first;
     auto cor_ab = cov_ab / (vec_a_info.second * vec_b_info.second);
@@ -153,7 +155,16 @@ class Server {
 
   std::vector<received_data> received_data_{};
 };
-int main() {
-  Server server("localhost", 20000, std::chrono::seconds{5}, std::chrono::seconds{3});
+int main(__attribute__((unused)) int argc, char** argv) {
+  // argv[1] : port, argv[2] : W(region), argv[3] : S(interval) e.g. ./server 20000 5 3
+  char** pend1 = nullptr;
+  int64_t port = std::strtol(argv[1], pend1, 10);
+  char** pend2 = nullptr;
+  int64_t W = std::strtol(argv[2], pend2, 10);
+  char** pend3 = nullptr;
+  int64_t S = std::strtol(argv[3], pend3, 10);
+
+  Server server("localhost", static_cast<int>(port), std::chrono::seconds{static_cast<int>(W)},
+                std::chrono::seconds{static_cast<int>(S)});
   server.start_server();
 }
